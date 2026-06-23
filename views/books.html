@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koleksi Novel - Ruang Aksara</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <div class="logo">
+        Ruang Aksara
+    </div>
+
+    <div class="menu">
+        <a href="/">Home</a>
+        <a href="/books" class="active">Koleksi Novel</a>
+        <a href="/login">Admin</a>
+    </div>
+
+</nav>
+
+<header class="header-section">
+
+    <h1>Koleksi Novel</h1>
+
+    <p>
+        Temukan berbagai novel terbaik dari berbagai genre.
+        Cari, baca informasi, dan nikmati pengalaman perpustakaan digital.
+    </p>
+
+</header>
+
+
+<section class="filter-section">
+
+    <input
+        id="search"
+        type="text"
+        placeholder="Cari judul novel, penulis, atau kata kunci..."
+        class="input-search"
+    >
+
+    <select id="filter" class="input-filter">
+        <option value="">Semua Genre</option>
+        <option value="Drama">Drama</option>
+        <option value="Fantasi">Fantasi</option>
+        <option value="Romantis">Romantis</option>
+        <option value="Horor">Horor</option>
+    </select>
+
+    <select id="statusFilter" class="input-filter">
+        <option value="">Semua Status</option>
+        <option value="Tersedia">Tersedia</option>
+        <option value="Dipinjam">Tersedia</option>
+    </select>
+
+</section>
+
+
+<section id="bookList" class="book-container">
+
+</section>
+
+
+<footer class="footer">
+
+    <p>
+        Ruang Aksara © 2026 - Perpustakaan Digital Novel
+    </p>
+
+</footer>
+
+<script src="/js/books.js"></script>
+
+</body>
+</html>
