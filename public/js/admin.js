@@ -7,7 +7,7 @@ if (!localStorage.getItem("isAdmin")) {
 
 function doLogout() {
     localStorage.removeItem("isAdmin");
-    window.location.href = "/login";
+    window.location.href = "/";
 }
 
 let editId = null;
