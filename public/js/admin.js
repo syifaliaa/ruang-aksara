@@ -1,3 +1,15 @@
+/* =========================
+   GUARD & LOGOUT
+========================= */
+if (!localStorage.getItem("isAdmin")) {
+    window.location.href = "/login";
+}
+
+function doLogout() {
+    localStorage.removeItem("isAdmin");
+    window.location.href = "/login";
+}
+
 let editId = null;
 
 /* =========================
@@ -14,19 +26,12 @@ async function loadBooks() {
         list.innerHTML += `
             <div class="card">
                 <img src="${b.image}" width="100" style="display:block; margin-bottom:10px;">
-
                 <h3>${b.title}</h3>
                 <p>Penulis : ${b.author}</p>
                 <p>Genre : ${b.genre}</p>
                 <p>Status : ${b.status}</p>
-
-                <button onclick="hapus(${b.id})">
-                    Hapus
-                </button>
-
-                <button onclick='openEdit(${JSON.stringify(b)})'>
-                    Edit
-                </button>
+                <button onclick="hapus(${b.id})">Hapus</button>
+                <button onclick='openEdit(${JSON.stringify(b)})'>Edit</button>
             </div>
         `;
     });
@@ -36,10 +41,7 @@ async function loadBooks() {
    HAPUS BUKU
 ========================= */
 async function hapus(id) {
-    await fetch("/api/books/" + id, {
-        method: "DELETE"
-    });
-
+    await fetch("/api/books/" + id, { method: "DELETE" });
     loadBooks();
     loadBookSelect();
 }
@@ -48,11 +50,8 @@ async function hapus(id) {
    BUKA EDIT
 ========================= */
 function openEdit(book) {
-
     editId = book.id;
-
     document.getElementById("editBox").style.display = "block";
-
     document.getElementById("editTitle").value = book.title;
     document.getElementById("editAuthor").value = book.author;
     document.getElementById("editGenre").value = book.genre;
@@ -63,12 +62,9 @@ function openEdit(book) {
    SIMPAN EDIT
 ========================= */
 async function saveEdit() {
-
     await fetch("/api/books/" + editId, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             title: editTitle.value,
             author: editAuthor.value,
@@ -78,30 +74,27 @@ async function saveEdit() {
     });
 
     document.getElementById("editBox").style.display = "none";
-
     loadBooks();
     loadBookSelect();
 }
 
 /* =========================
-   TAMBAH BUKU (UPLOAD GAMBAR FIX)
+   TAMBAH BUKU
 ========================= */
 document.getElementById("form").addEventListener("submit", async (e) => {
-
     e.preventDefault();
 
     const formData = new FormData(e.target);
 
     const res = await fetch("/api/books", {
         method: "POST",
-        body: formData   // 🔥 WAJIB FORM DATA
+        body: formData
     });
 
     const data = await res.json();
     console.log("UPLOAD RESULT:", data);
 
     e.target.reset();
-
     loadBooks();
     loadBookSelect();
 });
@@ -110,12 +103,10 @@ document.getElementById("form").addEventListener("submit", async (e) => {
    LOAD SELECT BUKU
 ========================= */
 async function loadBookSelect() {
-
     const res = await fetch("/api/books");
     const books = await res.json();
 
     const select = document.getElementById("bookSelect");
-
     if (!select) return;
 
     select.innerHTML = "";
@@ -123,38 +114,25 @@ async function loadBookSelect() {
     books
         .filter(b => b.status === "Tersedia")
         .forEach(b => {
-
-            select.innerHTML += `
-                <option value="${b.id}">
-                    ${b.title}
-                </option>
-            `;
-
+            select.innerHTML += `<option value="${b.id}">${b.title}</option>`;
         });
-
 }
 
 /* =========================
    INPUT PEMINJAMAN
 ========================= */
 document.getElementById("loanForm")?.addEventListener("submit", async (e) => {
-
     e.preventDefault();
 
-    const data = Object.fromEntries(
-        new FormData(e.target)
-    );
+    const data = Object.fromEntries(new FormData(e.target));
 
     await fetch("/api/loans", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
     });
 
     e.target.reset();
-
     loadBooks();
     loadBookSelect();
     loadLoans();
@@ -165,32 +143,23 @@ document.getElementById("loanForm")?.addEventListener("submit", async (e) => {
    LOAD PEMINJAMAN
 ========================= */
 async function loadLoans() {
-
     const res = await fetch("/api/loans");
     const loans = await res.json();
 
     const list = document.getElementById("loanList");
-
     if (!list) return;
 
     list.innerHTML = "";
 
     loans.forEach(l => {
-
         list.innerHTML += `
         <div class="card">
-
             <h3>${l.borrower}</h3>
-
             <p>No HP : ${l.phone}</p>
             <p>Alamat : ${l.address}</p>
             <p>Buku : ${l.bookTitle}</p>
             <p>Tanggal Pinjam : ${l.borrowDate}</p>
-
-            <button onclick="returnBook(${l.id})">
-                Kembalikan
-            </button>
-
+            <button onclick="returnBook(${l.id})">Kembalikan</button>
         </div>
         `;
     });
@@ -200,11 +169,7 @@ async function loadLoans() {
    PENGEMBALIAN
 ========================= */
 async function returnBook(id) {
-
-    await fetch("/api/return/" + id, {
-        method: "PUT"
-    });
-
+    await fetch("/api/return/" + id, { method: "PUT" });
     loadBooks();
     loadBookSelect();
     loadLoans();
@@ -215,36 +180,25 @@ async function returnBook(id) {
    KETERLAMBATAN > 7 HARI
 ========================= */
 async function loadLateLoans() {
-
     const res = await fetch("/api/late");
     const data = await res.json();
 
     const lateList = document.getElementById("lateList");
-
     if (!lateList) return;
 
     lateList.innerHTML = "";
 
     data.forEach(l => {
-
-        const pesan =
-            "Halo, buku yang Anda pinjam sudah melewati batas waktu. Mohon segera dikembalikan.";
-
-        const wa =
-            `https://wa.me/${l.phone}?text=${encodeURIComponent(pesan)}`;
+        const pesan = "Halo, buku yang Anda pinjam sudah melewati batas waktu. Mohon segera dikembalikan.";
+        const wa = `https://wa.me/${l.phone}?text=${encodeURIComponent(pesan)}`;
 
         lateList.innerHTML += `
         <div class="card">
-
             <h3>${l.borrower}</h3>
             <p>Buku : ${l.bookTitle}</p>
             <p>No HP : ${l.phone}</p>
             <p>Terlambat ${l.daysLate} hari</p>
-
-            <a href="${wa}" target="_blank">
-                Kirim WhatsApp
-            </a>
-
+            <a href="${wa}" target="_blank">Kirim WhatsApp</a>
         </div>
         `;
     });
